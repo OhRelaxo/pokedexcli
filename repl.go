@@ -7,6 +7,8 @@ import (
 )
 
 func repl() {
+	url := "https://pokeapi.co/api/v2/location-area"
+	configptr := config{next: &url, previous: nil}
 	userInput := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex >")
@@ -16,24 +18,34 @@ func repl() {
 			continue
 		}
 		words := cleanInput(token)
-		searchForCommand(words)
+		searchForCommand(words, &configptr)
 	}
 }
 
-func searchForCommand(words []string) {
+func searchForCommand(words []string, configptr *config) {
 	for _, word := range words {
 		switch word {
 		case "help":
-			err := commandHelp()
+			err := commandHelp(configptr)
 			if err != nil {
 				fmt.Printf("error with executing the help command: %v\n", err)
 			}
 		case "exit":
-			err := commandExit()
+			err := commandExit(configptr)
 			if err != nil {
 				fmt.Printf("error with executing the exit command: %v\n", err)
 				fmt.Println("exiting the programm")
 				os.Exit(1)
+			}
+		case "map":
+			err := commandMap(configptr)
+			if err != nil {
+				fmt.Printf("error with executing the map command: %v\n", err)
+			}
+		case "mapb":
+			err := commandMapb(configptr)
+			if err != nil {
+				fmt.Printf("error with executing the mapb command: %v\n", err)
 			}
 		}
 	}
