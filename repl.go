@@ -3,12 +3,28 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"time"
+
+	"github.com/ohrelaxo/pokedexcli/internal"
 )
 
 func repl() {
 	url := "https://pokeapi.co/api/v2/location-area"
-	configptr := config{next: &url, previous: nil}
+
+	interval, err := time.ParseDuration("10s")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cache, err := pokecache.NewCache(interval)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	configptr := config{next: &url, previous: nil, cache: &cache}
+
 	userInput := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex >")

@@ -1,8 +1,11 @@
 package main
 
+import pokecache "github.com/ohrelaxo/pokedexcli/internal"
+
 type config struct {
 	next     *string
 	previous *string
+	cache    *pokecache.Cache
 }
 
 type cliCommand struct {

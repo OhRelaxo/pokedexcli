@@ -56,19 +56,24 @@ func commandMapb(configptr *config) error {
 }
 
 func mapCommandshelper(url string, configptr *config) error {
-	res, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("error while making a http request to the pokeAPI: %w", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
+	rawjson, ok := configptr.cache.Get(url)
 
+	if !ok {
+		res, err := http.Get(url)
+		if err != nil {
+			return fmt.Errorf("error while making a http request to the pokeAPI: %w", err)
 		}
-	}(res.Body)
-	rawjson, err := io.ReadAll(res.Body)
-	if err != nil {
-		return fmt.Errorf("error while reading the response body: %w", err)
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+
+			}
+		}(res.Body)
+		rawjson, err = io.ReadAll(res.Body)
+		if err != nil {
+			return fmt.Errorf("error while reading the response body: %w", err)
+		}
+		configptr.cache.Add(url, rawjson)
 	}
 	var result pokeAPI
 	if err := json.Unmarshal(rawjson, &result); err != nil {
