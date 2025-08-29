@@ -21,6 +21,7 @@ func NewCache(interval time.Duration) (Cache, error) {
 	if interval <= 0 {
 		return c, fmt.Errorf("interval cant be 0")
 	}
+	c.mux = &sync.RWMutex{}
 	c.entry = make(map[string]cacheEntry)
 	go c.reapLoop(interval)
 	return c, nil

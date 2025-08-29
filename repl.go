@@ -12,13 +12,7 @@ import (
 
 func repl() {
 	url := "https://pokeapi.co/api/v2/location-area"
-
-	interval, err := time.ParseDuration("10s")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cache, err := pokecache.NewCache(interval)
+	cache, err := pokecache.NewCache(5 * time.Second)
 	if err != nil {
 		log.Fatal(err)
 	}
