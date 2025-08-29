@@ -8,7 +8,7 @@ import (
 
 type Cache struct {
 	entry map[string]cacheEntry
-	mux   sync.RWMutex
+	mux   *sync.RWMutex
 }
 
 type cacheEntry struct {
@@ -42,7 +42,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) PrintAllKeys() {
-	for k, _ := range c.entry {
+	for k := range c.entry {
 		fmt.Printf("Key: %v\n", k)
 	}
 }
