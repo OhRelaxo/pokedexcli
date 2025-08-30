@@ -11,7 +11,7 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(configptr *config) error
+	callback    func(configptr *config, area_name string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -35,6 +35,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Displays the previous 20 locations from the Pokemon world",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "list all the Pokemon located in an area",
+			callback:    commandExplore,
 		},
 	}
 	return commands

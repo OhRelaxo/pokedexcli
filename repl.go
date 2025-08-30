@@ -33,29 +33,36 @@ func repl() {
 }
 
 func searchForCommand(words []string, configptr *config) {
-	for _, word := range words {
+	var areaName string
+	for i, word := range words {
 		switch word {
 		case "help":
-			err := commandHelp(configptr)
+			err := commandHelp(configptr, areaName)
 			if err != nil {
-				fmt.Printf("error with executing the help command: %v\n", err)
+				fmt.Printf("error while executing the help command: %v\n", err)
 			}
 		case "exit":
-			err := commandExit(configptr)
+			err := commandExit(configptr, areaName)
 			if err != nil {
-				fmt.Printf("error with executing the exit command: %v\n", err)
+				fmt.Printf("error while executing the exit command: %v\n", err)
 				fmt.Println("exiting the programm")
 				os.Exit(1)
 			}
 		case "map":
-			err := commandMap(configptr)
+			err := commandMap(configptr, areaName)
 			if err != nil {
-				fmt.Printf("error with executing the map command: %v\n", err)
+				fmt.Printf("error while executing the map command: %v\n", err)
 			}
 		case "mapb":
-			err := commandMapb(configptr)
+			err := commandMapb(configptr, areaName)
 			if err != nil {
-				fmt.Printf("error with executing the mapb command: %v\n", err)
+				fmt.Printf("error while executing the mapb command: %v\n", err)
+			}
+		case "explore":
+			areaName = words[i+1]
+			err := commandExplore(configptr, areaName)
+			if err != nil {
+				fmt.Printf("error while executing the explore command: %v\n", err)
 			}
 		}
 	}
