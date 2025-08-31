@@ -65,10 +65,16 @@ func searchForCommand(words []string, configptr *config) {
 			}
 		case "catch":
 			arg = words[i+1]
-			fmt.Printf("\nThrowing a Pokeball at %v\n", arg)
+			fmt.Printf("\nThrowing a Pokeball at %v...\n", arg)
 			err := commandCatch(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the catch command: %v\n", err)
+			}
+		case "inspect":
+			arg = words[i+1]
+			err := commandInspect(configptr, arg)
+			if err != nil {
+				fmt.Printf("error while executing the inspect command: %v\n", err)
 			}
 		}
 	}

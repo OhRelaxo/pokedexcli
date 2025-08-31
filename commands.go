@@ -181,3 +181,26 @@ func commandCatch(configptr *config, pokemonName string) error {
 	}
 	return nil
 }
+
+func commandInspect(configptr *config, pokemonName string) error {
+	if entry, ok := configptr.pokedex[pokemonName]; ok {
+		fmt.Printf("Name: %v\n", entry.Name)
+		fmt.Printf("Height: %v\n", entry.Height)
+		fmt.Printf("Weight: %v\n", entry.Weight)
+		fmt.Println("Ability's:")
+		for _, ability := range entry.Abilities {
+			fmt.Printf(" -%v\n", ability.Ability.Name)
+		}
+		fmt.Println("Stats:")
+		for _, stat := range entry.Stats {
+			fmt.Printf(" -%v: %v\n", stat.Stat.Name, stat.BaseStat)
+		}
+		fmt.Println("Types:")
+		for _, pType := range entry.Types {
+			fmt.Printf(" -%v\n", pType.Type.Name)
+		}
+		return nil
+	}
+	fmt.Println("you have not caught that pokemon")
+	return nil
+}
