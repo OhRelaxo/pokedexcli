@@ -197,10 +197,22 @@ func commandInspect(configptr *config, pokemonName string) error {
 		}
 		fmt.Println("Types:")
 		for _, pType := range entry.Types {
-			fmt.Printf(" -%v\n", pType.Type.Name)
+			fmt.Printf(" - %v\n", pType.Type.Name)
 		}
 		return nil
 	}
 	fmt.Println("you have not caught that pokemon")
+	return nil
+}
+
+func commandPokedex(configptr *config, _ string) error {
+	fmt.Println("Your Pokedex:")
+	if len(configptr.pokedex) == 0 {
+		fmt.Println("You have caught no Pokemon's :(")
+		return nil
+	}
+	for _, entry := range configptr.pokedex {
+		fmt.Printf(" - %v\n", entry.Name)
+	}
 	return nil
 }

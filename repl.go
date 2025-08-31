@@ -76,6 +76,11 @@ func searchForCommand(words []string, configptr *config) {
 			if err != nil {
 				fmt.Printf("error while executing the inspect command: %v\n", err)
 			}
+		case "pokedex":
+			err := commandPokedex(configptr, arg)
+			if err != nil {
+				fmt.Printf("error while executing the pokedex command: %v\n", err)
+			}
 		}
 	}
 }
