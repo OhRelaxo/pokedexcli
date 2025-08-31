@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 )
@@ -22,6 +23,31 @@ type exploreAPI struct {
 			Name string `json:"name"`
 		} `json:"pokemon"`
 	} `json:"pokemon_encounters"`
+}
+
+type catchAPI struct {
+	Abilities []struct {
+		Ability struct {
+			Name string `json:"name"`
+		} `json:"ability"`
+	} `json:"abilities"`
+	BaseExperience int    `json:"base_experience"`
+	Height         int    `json:"height"`
+	Name           string `json:"name"`
+	Stats          []struct {
+		BaseStat int `json:"base_stat"`
+		Effort   int `json:"effort"`
+		Stat     struct {
+			Name string `json:"name"`
+		} `json:"stat"`
+	} `json:"stats"`
+	Types []struct {
+		Slot int `json:"slot"`
+		Type struct {
+			Name string `json:"name"`
+		} `json:"type"`
+	} `json:"types"`
+	Weight int `json:"weight"`
 }
 
 func commandExit(_ *config, _ string) error {
@@ -75,7 +101,7 @@ func mapCommandsHelper(url string, configptr *config) error {
 	}
 	var result pokeAPI
 	if err := json.Unmarshal(rawjson, &result); err != nil {
-		return fmt.Errorf("error while unmarshal the read response boy: %w", err)
+		return fmt.Errorf("error while unmarshal the read response body: %w", err)
 	}
 	configptr.next = result.Next
 	configptr.previous = result.Previous
@@ -99,7 +125,7 @@ func commandExplore(configptr *config, areaName string) error {
 	}
 	var result exploreAPI
 	if err := json.Unmarshal(rawjson, &result); err != nil {
-		return fmt.Errorf("error while unmarshal the read response boy: %w", err)
+		return fmt.Errorf("error while unmarshal the read response body: %w", err)
 	}
 
 	for _, encounters := range result.PokemonEncounters {
@@ -127,4 +153,31 @@ func fetchPokeAPI(url string, configptr *config) ([]byte, error) {
 	}
 	configptr.cache.Add(url, result)
 	return result, nil
+}
+
+func commandCatch(configptr *config, pokemonName string) error {
+	baseUrl := "https://pokeapi.co/api/v2/pokemon/"
+	url := baseUrl + pokemonName
+	rawjson, ok := configptr.cache.Get(url)
+
+	if !ok {
+		result, err := fetchPokeAPI(url, configptr)
+		if err != nil {
+			return err
+		}
+		rawjson = result
+	}
+
+	var result catchAPI
+	if err := json.Unmarshal(rawjson, &result); err != nil {
+		return fmt.Errorf("error while unmarshal the read response body: %w", err)
+	}
+	rdmVal := rand.Intn(result.BaseExperience)
+	if rdmVal >= result.BaseExperience/2 { // result.BaseExperience
+		fmt.Printf("%v was Caught!\n", result.Name)
+		configptr.pokedex[result.Name] = result
+	} else {
+		fmt.Printf("%v escaped!\n", result.Name)
+	}
+	return nil
 }

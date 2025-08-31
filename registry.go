@@ -6,12 +6,13 @@ type config struct {
 	next     *string
 	previous *string
 	cache    *pokecache.Cache
+	pokedex  map[string]catchAPI
 }
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(configptr *config, area_name string) error
+	callback    func(configptr *config, arg string) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -40,6 +41,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "list all the Pokemon located in an area",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "catches a Pokemon",
+			callback:    commandCatch,
 		},
 	}
 	return commands

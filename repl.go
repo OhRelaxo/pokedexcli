@@ -16,8 +16,7 @@ func repl() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	configptr := config{next: &url, previous: nil, cache: &cache}
+	configptr := config{next: &url, previous: nil, cache: &cache, pokedex: make(map[string]catchAPI)}
 
 	userInput := bufio.NewScanner(os.Stdin)
 	for {
@@ -33,36 +32,43 @@ func repl() {
 }
 
 func searchForCommand(words []string, configptr *config) {
-	var areaName string
+	var arg string
 	for i, word := range words {
 		switch word {
 		case "help":
-			err := commandHelp(configptr, areaName)
+			err := commandHelp(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the help command: %v\n", err)
 			}
 		case "exit":
-			err := commandExit(configptr, areaName)
+			err := commandExit(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the exit command: %v\n", err)
 				fmt.Println("exiting the programm")
 				os.Exit(1)
 			}
 		case "map":
-			err := commandMap(configptr, areaName)
+			err := commandMap(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the map command: %v\n", err)
 			}
 		case "mapb":
-			err := commandMapb(configptr, areaName)
+			err := commandMapb(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the mapb command: %v\n", err)
 			}
 		case "explore":
-			areaName = words[i+1]
-			err := commandExplore(configptr, areaName)
+			arg = words[i+1]
+			err := commandExplore(configptr, arg)
 			if err != nil {
 				fmt.Printf("error while executing the explore command: %v\n", err)
+			}
+		case "catch":
+			arg = words[i+1]
+			fmt.Printf("\nThrowing a Pokeball at %v\n", arg)
+			err := commandCatch(configptr, arg)
+			if err != nil {
+				fmt.Printf("error while executing the catch command: %v\n", err)
 			}
 		}
 	}
